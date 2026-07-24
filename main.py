@@ -2,6 +2,26 @@ import psutil as p
 import time
 import os
 from colorama import Fore , init
+import csv
+from datetime import datetime
+
+os.makedirs("logs", exist_ok=True)
+session_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+CSV_FILE = f"logs/system_metrics_{session_time}.csv"
+
+
+with open(CSV_FILE, "w", newline="") as file:
+    writer = csv.writer(file)
+
+    writer.writerow([
+        "Timestamp",
+        "CPU (%)",
+        "RAM (%)",
+        "Disk C (%)",
+        "Disk D (%)",
+        "Upload (KB/s)",
+        "Download (KB/s)"
+    ])
 
 init(autoreset=True)
 
@@ -33,6 +53,8 @@ for proc in p.process_iter():
 time.sleep(1)
 try:
     while True:
+       
+       
         os.system("cls")
 
         print(Fore.CYAN + "=" * 45)
@@ -60,8 +82,8 @@ try:
         disk_d = p.disk_usage("D:\\").percent
         color=get_color(disk_d)
         print(f"DISK D   {color}{progress_bars(disk_d)}   {disk_d:.1f}%\n")
-        if disk_c >= disk_alert:
-         print(Fore.YELLOW + "⚠ WARNING: C Drive Almost Full!\n")
+        if disk_d >= disk_alert:
+         print(Fore.YELLOW + "⚠ WARNING: D Drive Almost Full!\n")
 
         new = p.net_io_counters()
         upload = (new.bytes_sent - old.bytes_sent) / kb / 5
@@ -101,6 +123,20 @@ try:
         print(Fore.MAGENTA + f"{'PID':<8}{'Process':<25}{'CPU %':<8}")
         for proc in top[:5]:
             print(f"{proc['pid']:<8}{proc['name']:<25}{proc['cpu_percent']:.2f}")
+            
+        with open(CSV_FILE, "a", newline="") as file:
+            writer = csv.writer(file)
+
+            writer.writerow([
+               datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+               round(cpu, 2),
+               round(ram, 2),
+               round(disk_c, 2),
+               round(disk_d, 2),
+               round(upload, 3),
+               round(download, 3)
+            ])
+         
         time.sleep(5)
 
 except KeyboardInterrupt as e:

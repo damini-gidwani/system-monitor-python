@@ -18,6 +18,9 @@ def progress_bars(percent, length=20):
     empty = length - filled
     return "█" * filled + "░" * empty
 
+cpu_alert = 90
+ram_alert = 85
+disk_alert = 90
 
 gb = 1024**3
 kb = 1024
@@ -39,18 +42,26 @@ try:
         cpu = p.cpu_percent(interval=None)
         color=get_color(cpu)
         print(f"CPU      {color}{progress_bars(cpu)}   {cpu:.1f}%\n")
+        if(cpu>=cpu_alert):
+           print(Fore.RED + "⚠ WARNING: High CPU Usage!\n")
 
         ram = p.virtual_memory().percent
         color=get_color(ram)
         print(f"RAM      {color}{progress_bars(ram)}   {ram:.1f}%\n")
+        if(ram>=ram_alert):
+           print(Fore.YELLOW + "⚠ WARNING: High RAM Usage!\n")
 
         disk_c = p.disk_usage("C:\\").percent
         color=get_color(disk_c)
         print(f"DISK C   {color}{progress_bars(disk_c)}   {disk_c:.1f}%\n")
+        if disk_c >= disk_alert:
+         print(Fore.YELLOW + "⚠ WARNING: C Drive Almost Full!\n")
 
         disk_d = p.disk_usage("D:\\").percent
         color=get_color(disk_d)
         print(f"DISK D   {color}{progress_bars(disk_d)}   {disk_d:.1f}%\n")
+        if disk_c >= disk_alert:
+         print(Fore.YELLOW + "⚠ WARNING: C Drive Almost Full!\n")
 
         new = p.net_io_counters()
         upload = (new.bytes_sent - old.bytes_sent) / kb / 5

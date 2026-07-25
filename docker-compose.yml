@@ -1,0 +1,6 @@
+services:
+  monitoring:
+    build: .
+    volumes:
+      - ./logs:/app/logs
+    container_name: monitoring

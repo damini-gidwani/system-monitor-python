@@ -1,6 +1,9 @@
-FROM python:3.14
-WORKDIR /app
-RUN apt-get update && apt-get install && pip install colorama psutil  
-COPY main.py . 
-CMD ["python","main.py"]
+FROM python:3.14-slim
 
+WORKDIR /app
+
+COPY main.py .
+
+RUN pip install --no-cache-dir colorama psutil
+
+CMD ["python", "main.py"]
